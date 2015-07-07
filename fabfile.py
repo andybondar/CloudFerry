@@ -42,6 +42,14 @@ LOG = utils.get_log(__name__)
 DEFAULT_FILTERS_FILES = 'configs/filters'
 
 
+def tracefunc(frame, event, arg, indent=[0]):
+      if event == "line":
+          print "%s %s %s" % (frame.f_code.co_name, frame.f_code.co_filename, frame.f_lineno)
+      return tracefunc
+import sys
+sys.settrace(tracefunc)
+
+
 @task
 def migrate(name_config=None, name_instance=None, debug=False):
     """
