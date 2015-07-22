@@ -2,6 +2,7 @@
 set -e
 set -x
 
+BUILD_NUMBER="${BUILD_NUMBER:-74390}"
 WORKSPACE="${WORKSPACE:-$( cd $( dirname "$0" ) && cd ../../../ && pwd)}"
 
 CF_DIR=$WORKSPACE/cloudferry
@@ -21,17 +22,14 @@ echo "Preparing environment"
 pushd $CF_DIR
 
 if [ "$JOB_NAME" = "cloudferry-functional-tests" ]; then
-    git checkout devel
+    echo "Job ${JOB_NAME} is running..."
     git remote update
     # cloudferry source dir is not deleted after job finish, so if
     # pull request cannot be automatically rebased, we must abort it explicitly and
     # exit with failure. In case rebase succeeded, functional test should # move on.
     git pull --rebase origin devel || ( git rebase --abort && exit 1 )
-elif  [ "$JOB_NAME" = "cloudferry-release-builder"]; then
-    git checkout master
-    git remote update
-    git pull --rebase origin master || ( git rebase --abort && exit 1 )
-    git pull --rebase origin devel || ( git rebase --abort && exit 1 )
+elif  [ "$JOB_NAME" = "cloudferry-release-builder" ]; then
+    echo "Job ${JOB_NAME} is running, 'git remote update' and 'git pull --rebase origin devel' was performed previously"
 else
     echo "JOB_NAME defined incorrectly"
     exit 1
@@ -47,8 +45,11 @@ echo "Preparing lab"
 pushd devlab
 echo 'Removing old VMs if exist, first try with vagrant...'
 vagrant destroy --force
-echo 'then with vboxmanage...'
-for v in `vboxmanage list vms | awk '{print $1}'`; do vboxmanage unregistervm --delete $v; done
+echo 'then try to kill processes'
+for n in `vboxmanage list vms | awk -F"{" '{print $2}' | awk -F"}" '{print $1}'`; do ps aux | grep $n | awk '{print $2}' | xargs -I {} kill {}; done
+echo 'then unregister VMs with vboxmanage...'
+vboxmanage list vms | awk -F"{" '{print $2}' | awk -F"}" '{print $1}' | xargs -I {} vboxmanage unregistervm --delete {}
+# exit on error if VMs are still registered
 list=$(vboxmanage list vms); if [[ -n $list ]]; then echo "Need to clean VMs"; exit 1; fi
 
 echo 'Removing old hostinerfaces...'
