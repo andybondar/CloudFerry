@@ -161,3 +161,4 @@ See `devlab/README.md` for test environment description.
  - Release v1.0.3 is ready
  - Release v1.0.4 is ready
  - Release v1.0.5 is ready
+ - Release v1.0.5 is ready
