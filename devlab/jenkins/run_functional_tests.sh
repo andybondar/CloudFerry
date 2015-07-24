@@ -2,10 +2,9 @@
 set -e
 set -x
 
-WORKSPACE="${WORKSPACE:-$( cd $( dirname "$0" ) && cd ../../../ && pwd)}"
-
-CF_DIR=$WORKSPACE/cloudferry
-JOB_NAME="${JOB_NAME:-cloudferry-functional-tests}"
+export WORKSPACE="${WORKSPACE:-$( cd $( dirname "$0" ) && cd ../../../ && pwd)}"
+export CF_DIR=$WORKSPACE/cloudferry
+export JOB_NAME="${JOB_NAME:-cloudferry-functional-tests}"
 
 trap 'clean_exit $LINENO $BASH_COMMAND; exit' SIGHUP SIGINT SIGQUIT SIGTERM EXIT
 clean_exit()
@@ -28,10 +27,7 @@ if [ "$JOB_NAME" = "cloudferry-functional-tests" ]; then
     # exit with failure. In case rebase succeeded, functional test should # move on.
     git pull --rebase origin devel || ( git rebase --abort && exit 1 )
 elif  [ "$JOB_NAME" = "cloudferry-release-builder"]; then
-    git checkout master
-    git remote update
-    git pull --rebase origin master || ( git rebase --abort && exit 1 )
-    git pull --rebase origin devel || ( git rebase --abort && exit 1 )
+    echo "Job ${JOB_NAME} is running, 'git remote update' and 'git pull --rebase origin devel' was performed previously"
 else
     echo "JOB_NAME defined incorrectly"
     exit 1
@@ -43,18 +39,17 @@ pip install pip==6.1.1
 pip install --allow-all-external -r requirements.txt -r test-requirements.txt
 
 echo "Preparing lab"
-
-pushd devlab
-echo 'Removing old VMs if exist, first try with vagrant...'
-vagrant destroy --force
-echo 'then with vboxmanage...'
-for v in `vboxmanage list vms | awk '{print $1}'`; do vboxmanage unregistervm --delete $v; done
+echo "kill VBoxHeadless processes"
+for n in `vboxmanage list vms | awk -F"{" '{print $2}' | awk -F"}" '{print $1}'`; do ps aux | grep $n | grep VBoxHeadless | awk '{print $2}' | xargs -I {} kill -9 {}; done
+echo 'then unregister VMs...'
+vboxmanage list vms | awk -F"{" '{print $2}' | awk -F"}" '{print $1}' | xargs -I {} vboxmanage unregistervm --delete {}
 list=$(vboxmanage list vms); if [[ -n $list ]]; then echo "Need to clean VMs"; exit 1; fi
 
 echo 'Removing old hostinerfaces...'
 vboxmanage list hostonlyifs | awk 'BEGIN { RS="\n\n" } $0 ~ /192.168.1.1/ {print $0}' | awk '$0 ~ /^Name:/ {print $2}'
 vboxmanage list hostonlyifs | awk 'BEGIN { RS="\n\n" } $0 ~ /192.168.1.1/ {print $0}' | awk '$0 ~ /^Name:/ {print $2}' | xargs -I {} vboxmanage hostonlyif remove {}
 
+pushd devlab
 echo 'Booting new VMs...'
 vagrant box update
 vagrant up grizzly icehouse
