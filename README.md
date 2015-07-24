@@ -158,3 +158,4 @@ See `devlab/README.md` for test environment description.
      * User's
 
  - Release v1.0.2 is ready
+ - Release v1.0.3 is ready
