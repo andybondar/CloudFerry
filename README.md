@@ -157,3 +157,4 @@ See `devlab/README.md` for test environment description.
      * Admin's
      * User's
 
+ - Release v1.0.2 is ready
