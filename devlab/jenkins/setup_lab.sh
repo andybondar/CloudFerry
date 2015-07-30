@@ -6,7 +6,7 @@ export WORKSPACE="${WORKSPACE:-$( cd $( dirname "$0" ) && cd ../../../ && pwd)}"
 export CF_DIR=$WORKSPACE/cloudferry
 export JOB_NAME="${JOB_NAME:-cloudferry-functional-tests}"
 export BUILD_NUMBER="${BUILD_NUMBER:-$[ 1 + $[ RANDOM % 1000 ]]}"
-
+export BUILD_NAME="${BUILD_NAME:--$(echo $JOB_NAME | sed s/cloudferry/cf/)-${BUILD_NUMBER}}"
 export VIRTUALBOX_NETWORK_NAME="vn-${JOB_NAME}-${BUILD_NUMBER}"
 
 echo "Generate SSH key pair for 'cloudferry' instance"
@@ -34,7 +34,7 @@ sed -i s/cfjenkins/$(echo $JOB_NAME | sed s/cloudferry/cf/)-${BUILD_NUMBER}/g ${
 
 echo 'Booting new VMs...'
 vagrant box update
-vagrant up grizzly-$(echo $JOB_NAME | sed s/cloudferry/cf/)-${BUILD_NUMBER} icehouse-$(echo $JOB_NAME | sed s/cloudferry/cf/)-${BUILD_NUMBER} cloudferry-$(echo $JOB_NAME | sed s/cloudferry/cf/)-${BUILD_NUMBER}
+vagrant up grizzly${BUILD_NAME} icehouse${BUILD_NAME} cloudferry${BUILD_NAME}
 
 
 echo 'Running test load cleaning...'

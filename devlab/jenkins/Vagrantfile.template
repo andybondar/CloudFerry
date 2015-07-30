@@ -24,19 +24,19 @@ user = %x(id -un).strip()
 uid = %x(id -u #{user}).strip()
 
 nodes = {
-  "grizzly-cfjenkins" => {
+  "grizzly#{ENV["BUILD_NAME"]}" => {
     "box" => "openstack-user/precise-grizzly",
     "ip" => "#{options['grizzly_ip']}",
     "memory" => 4096,
     "role" => "openstack"
   },
-  "icehouse-cfjenkins" => {
+  "icehouse#{ENV["BUILD_NAME"]}" => {
     "box" => "openstack-user/precise-icehouse",
     "ip" => "#{options['icehouse_ip']}",
     "memory" => 4096,
     "role" => "openstack"
   },
-  "juno-cfjenkins" => {
+  "juno#{ENV["BUILD_NAME"]}" => {
     "box" => "openstack-user/juno",
     "ip" => "#{options['juno_ip']}",
     "memory" => 4096,
@@ -45,7 +45,7 @@ nodes = {
       "branch" => 'stable/juno' 
         }
   },
-  "cloudferry-cfjenkins" => {
+  "cloudferry#{ENV["BUILD_NAME"]}" => {
     "box" => "hashicorp/precise64",
     "ip" => "#{options['cloudferry_ip']}",
     "memory" => 2048,

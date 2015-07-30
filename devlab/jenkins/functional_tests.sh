@@ -6,7 +6,7 @@ export WORKSPACE="${WORKSPACE:-$( cd $( dirname "$0" ) && cd ../../../ && pwd)}"
 export CF_DIR=$WORKSPACE/cloudferry
 export JOB_NAME="${JOB_NAME:-cloudferry-functional-tests}"
 export BUILD_NUMBER="${BUILD_NUMBER:-$[ 1 + $[ RANDOM % 1000 ]]}"
-
+export BUILD_NAME="-$(echo $JOB_NAME | sed s/cloudferry/cf/)-${BUILD_NUMBER}"
 export VIRTUALBOX_NETWORK_NAME="vn-${JOB_NAME}-${BUILD_NUMBER}"
 
 trap 'clean_exit $LINENO $BASH_COMMAND; exit' SIGHUP SIGINT SIGQUIT SIGTERM EXIT
