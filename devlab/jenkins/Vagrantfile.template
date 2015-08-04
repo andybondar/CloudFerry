@@ -34,7 +34,9 @@ nodes = {
     "box" => "openstack-user/precise-icehouse",
     "ip" => "#{options['icehouse_ip']}",
     "memory" => 4096,
-    "role" => "openstack"
+    "role" => "openstack",
+    "neutron" => "true"
+
   },
   "juno#{ENV["BUILD_NAME"]}" => {
     "box" => "openstack-user/juno",
@@ -126,6 +128,10 @@ Vagrant.configure(2) do |config|
       if nodedata.has_key?("ip") then
         thisnode.vm.network "private_network", ip: nodedata['ip'],
           virtualbox__intnet: options['virtualbox_network_name']
+      end
+      if nodedata.has_key?("neutron") then
+        thisnode.vm.provision "shell",
+          path: "./provision/restart_nova_neutron.sh"
       end
 
       thisnode.vm.provider "virtualbox" do |v|

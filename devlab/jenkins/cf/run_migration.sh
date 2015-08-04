@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+
 set -x
 
 export CF_DIR=${HOME}/cloudferry

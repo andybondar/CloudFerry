@@ -45,3 +45,7 @@ ${CF_DIR}/devlab/jenkins/setup_lab.sh
 ${CF_DIR}/devlab/jenkins/copy_code_to_cf.sh
 ${CF_DIR}/devlab/jenkins/run_scripts_on_cf.sh
 ${CF_DIR}/devlab/jenkins/get_test_results.sh
+
+echo "Destroy VMs"
+cd ${CF_DIR}/devlab/
+vagrant destroy --force
