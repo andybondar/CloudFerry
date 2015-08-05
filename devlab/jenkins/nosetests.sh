@@ -15,10 +15,16 @@ cf_user=`vagrant ssh-config ${cf_hostname} | grep -w "User" | awk '{print $2}'`
 cf_port=`vagrant ssh-config ${cf_hostname} | grep Port | awk '{print $2}'`
 cf_id=`vagrant ssh-config ${cf_hostname} | grep IdentityFile | awk '{print $2}'`
 
+
+#/home/vagrant/cloudferry/devlab/tests/nosetests.xml
+
 cf_ssh_cmd="ssh -q -oConnectTimeout=5 -oStrictHostKeyChecking=no -oCheckHostIP=no -i ${cf_id} ${cf_user}@${cf_ip} -p ${cf_port}"
-get_load="cloudferry/devlab/jenkins/cf/generate_load.sh"
-run_migration="cloudferry/devlab/jenkins/cf/run_migration.sh"
+run_nosetests="cloudferry/devlab/jenkins/cf/run_nosetests.sh"
+${cf_ssh_cmd} ${run_nosetests}
 
-${cf_ssh_cmd} ${get_load}
-${cf_ssh_cmd} ${run_migration}
+scp -q -oConnectTimeout=5 -oStrictHostKeyChecking=no -oCheckHostIP=no -i ${cf_id} -P ${cf_port} ${cf_user}@${cf_ip}:cloudferry/devlab/tests/nosetests.xml ${CF_DIR}/devlab/tests/nosetests.xml
 
+cd ${CF_DIR}/devlab
+vboxmanage list vms
+vagrant destroy --force
+vboxmanage list vms

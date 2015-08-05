@@ -9,7 +9,7 @@ export BUILD_NUMBER="${BUILD_NUMBER:-$[ 1 + $[ RANDOM % 1000 ]]}"
 export BUILD_NAME="-$(echo $JOB_NAME | sed s/cloudferry/cf/)-${BUILD_NUMBER}"
 export VIRTUALBOX_NETWORK_NAME="vn-${JOB_NAME}-${BUILD_NUMBER}"
 
-trap 'clean_exit $LINENO $BASH_COMMAND; exit' SIGHUP SIGINT SIGQUIT SIGTERM EXIT
+trap 'clean_exit $LINENO $BASH_COMMAND; exit' SIGHUP SIGINT SIGQUIT SIGTERM
 clean_exit()
 {
     pushd ${CF_DIR}/devlab
@@ -43,9 +43,5 @@ tar cvfz cloudferry.tar.gz cloudferry/
 echo "Put all steps below"
 ${CF_DIR}/devlab/jenkins/setup_lab.sh
 ${CF_DIR}/devlab/jenkins/copy_code_to_cf.sh
-${CF_DIR}/devlab/jenkins/run_scripts_on_cf.sh
-${CF_DIR}/devlab/jenkins/get_test_results.sh
-
-echo "Destroy VMs"
-cd ${CF_DIR}/devlab/
-vagrant destroy --force
+${CF_DIR}/devlab/jenkins/gen_load_and_migration.sh
+${CF_DIR}/devlab/jenkins/nosetests.sh

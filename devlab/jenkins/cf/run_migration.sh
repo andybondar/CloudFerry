@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 set -x
 
 export CF_DIR=${HOME}/cloudferry
@@ -16,7 +17,3 @@ devlab/provision/generate_config.sh --cloudferry-path "$CF_DIR"
 
 echo "Run migration"
 fab migrate:configuration.ini,debug=True
-
-cd ${CF_DIR}/devlab/tests
-echo 'Run tests'
-nosetests -d -v --with-xunit
