@@ -14,4 +14,6 @@ source ${CF_DIR}/devlab/tests/openrc.example
 
 cd ${CF_DIR}/devlab/tests
 echo 'Run tests'
+set +e
 nosetests -d -v --with-xunit
+set -e

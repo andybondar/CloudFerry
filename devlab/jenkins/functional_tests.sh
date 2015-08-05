@@ -9,7 +9,7 @@ export BUILD_NUMBER="${BUILD_NUMBER:-$[ 1 + $[ RANDOM % 1000 ]]}"
 export BUILD_NAME="-$(echo $JOB_NAME | sed s/cloudferry/cf/)-${BUILD_NUMBER}"
 export VIRTUALBOX_NETWORK_NAME="vn-${JOB_NAME}-${BUILD_NUMBER}"
 
-trap 'clean_exit $LINENO $BASH_COMMAND; exit' SIGHUP SIGINT SIGQUIT SIGTERM
+trap 'clean_exit $LINENO $BASH_COMMAND; exit' SIGHUP SIGINT SIGQUIT SIGTERM EXIT
 clean_exit()
 {
     pushd ${CF_DIR}/devlab
