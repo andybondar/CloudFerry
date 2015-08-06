@@ -21,9 +21,6 @@ cd  ${CF_DIR}/devlab
 echo 'Removing old VMs if exist...'
 vagrant destroy --force
 
-echo "Modify Vagrantfile"
-cp -f ${CF_DIR}/devlab/jenkins/Vagrantfile.template ${CF_DIR}/devlab/Vagrantfile
-
 echo 'Booting new VMs...'
 #vagrant box update
 vagrant up grizzly${BUILD_NAME} icehouse${BUILD_NAME} cloudferry${BUILD_NAME}
