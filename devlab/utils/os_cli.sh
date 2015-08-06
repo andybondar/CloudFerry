@@ -43,11 +43,9 @@ dst_port=`vagrant ssh-config $dst_hostname | grep Port | awk '{print $2}'`
 src_id=`vagrant ssh-config $src_hostname | grep IdentityFile | awk '{print $2}'`
 dst_id=`vagrant ssh-config $dst_hostname | grep IdentityFile | awk '{print $2}'`
 
-#dst_ssh_cmd="ssh -o stricthostkeychecking=no root@${dst}"
-#src_ssh_cmd="ssh -o stricthostkeychecking=no root@${src}"
-
-src_ssh_cmd="ssh -q -oConnectTimeout=5 -oStrictHostKeyChecking=no -oCheckHostIP=no -i ${src_id} ${src_user}@${src_ip} -p ${src_port}"
-dst_ssh_cmd="ssh -q -oConnectTimeout=5 -oStrictHostKeyChecking=no -oCheckHostIP=no -i ${dst_id} ${dst_user}@${dst_ip} -p ${dst_port}"
+ssh_options="-oConnectTimeout=5 -oStrictHostKeyChecking=no -oCheckHostIP=no"
+src_ssh_cmd="ssh -q ${ssh_options} -i ${src_id} ${src_user}@${src_ip} -p ${src_port}"
+dst_ssh_cmd="ssh -q ${ssh_options} -i ${dst_id} ${dst_user}@${dst_ip} -p ${dst_port}"
 
 dst_env=`cat << EOF
 declare -x OS_AUTH="http://${dst}:35357/v2.0";

@@ -15,14 +15,17 @@ cf_user=`vagrant ssh-config ${cf_hostname} | grep -w "User" | awk '{print $2}'`
 cf_port=`vagrant ssh-config ${cf_hostname} | grep Port | awk '{print $2}'`
 cf_id=`vagrant ssh-config ${cf_hostname} | grep IdentityFile | awk '{print $2}'`
 
+cf_ssh_options="-oConnectTimeout=5 -oStrictHostKeyChecking=no -oCheckHostIP=no"
 
-#/home/vagrant/cloudferry/devlab/tests/nosetests.xml
-
-cf_ssh_cmd="ssh -q -oConnectTimeout=5 -oStrictHostKeyChecking=no -oCheckHostIP=no -i ${cf_id} ${cf_user}@${cf_ip} -p ${cf_port}"
+cf_ssh_cmd="ssh -q ${cf_ssh_options} -i ${cf_id} ${cf_user}@${cf_ip} -p ${cf_port}"
 run_nosetests="cloudferry/devlab/jenkins/cf/run_nosetests.sh"
 ${cf_ssh_cmd} ${run_nosetests}
 
-scp -q -oConnectTimeout=5 -oStrictHostKeyChecking=no -oCheckHostIP=no -i ${cf_id} -P ${cf_port} ${cf_user}@${cf_ip}:cloudferry/devlab/tests/nosetests.xml ${CF_DIR}/devlab/tests/nosetests.xml
+
+xml_src_path="cloudferry/devlab/tests/nosetests.xml"
+xml_dst_path="${CF_DIR}/devlab/tests/nosetests.xml"
+scp -q ${cf_ssh_options} -i ${cf_id} -P ${cf_port} \
+${cf_user}@${cf_ip}:${xml_src_path} ${xml_dst_path}
 
 cd ${CF_DIR}/devlab
 vboxmanage list vms
