@@ -9,7 +9,7 @@ cd ${CF_DIR}/devlab/
 
 cf_hostname=`vagrant status | grep running | grep cloudferry | awk '{print $1}'`
 
-echo "Copy code archive to cloudferry-${cf_hostname} VM ..."
+echo "Get ssh parameters to connect to cloudferry-${cf_hostname} VM ..."
 cf_ip=`vagrant ssh-config ${cf_hostname} | grep HostName | awk '{print $2}'`
 cf_user=`vagrant ssh-config ${cf_hostname} | grep -w "User" | awk '{print $2}'`
 cf_port=`vagrant ssh-config ${cf_hostname} | grep Port | awk '{print $2}'`
